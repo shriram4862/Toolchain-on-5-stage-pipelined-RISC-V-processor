@@ -1,0 +1,75 @@
+risc v processor :
+
+toolchain = done
+
+snake_game/
+├── firmware/           # C code for PicoRV32
+│   ├── start.S        # Assembly startup
+│   ├── vga.c          # VGA drawing functions
+│   ├── vga.h          # VGA header
+│   ├── input.c        # Button reading
+│   ├── input.h        # Input header
+│   ├── snake.c        # Game logic
+│   ├── linker.ld      # Memory layout
+│   └── build.sh       # Build script
+├── hardware/          # Verilog for FPGA
+│   ├── picorv32.v     # PicoRV32 CPU
+│   ├── vga_controller.v
+│   ├── framebuffer.v
+│   ├── mmio_interface.v
+│   ├── soc_top.v
+│   └── constraints.xdc
+└── simulation/        # Testbench
+    └── tb_soc.v
+
+for running the simulation:
+
+iverilog -o sim picorv32.v vga_controller.v framebuffer.v mmio_interface.v soc_top.v tb_soc.v
+vvp sim
+gtkwave waves.vcd
+
+Build and deploy:
+
+cd firmware
+chmod +x build.sh
+./build.sh
+
+Convert to Memory Initialization:
+
+# Convert binary to Verilog memory format
+python3 -c "
+import sys
+with open('build_output/snake.bin', 'rb') as f:
+    data = f.read()
+with open('firmware.hex', 'w') as f:
+    for i, byte in enumerate(data):
+        f.write(f'{byte:02x}\n')
+        if i % 4 == 3: f.write('\n')
+"
+
+Implementation Flow
+Simulate → iverilog + vvp (Verify logic works)
+
+Synthesize → yosys (Convert to gates)
+
+Place & Route → nextpnr (Map to FPGA)
+
+Generate Bitstream → icepack (Create .bin file)
+
+Program FPGA → iceprog (Load onto board)
+
+ Key Insights:
+C code alone doesn't run on FPGA - needs hardware infrastructure
+
+Memory addresses in C must match hardware implementation
+
+Always simulate before deploying to FPGA
+
+Your game logic is good - just needs proper hardware support
+
+Build command
+# Compile with proper flags
+riscv64-unknown-elf-gcc -march=rv32im -mabi=ilp32 -ffreestanding -nostdlib \
+    -O1 -Wall -Wextra -Werror \
+    -c snake.c -o snake.o
+

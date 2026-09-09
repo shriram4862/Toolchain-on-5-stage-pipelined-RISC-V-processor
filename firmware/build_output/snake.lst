@@ -1,0 +1,959 @@
+
+build_output/snake.elf:     file format elf32-littleriscv
+
+
+Disassembly of section .text:
+
+00000000 <_start>:
+   0:	00001117          	auipc	sp,0x1
+   4:	1b010113          	addi	sp,sp,432 # 11b0 <_stack_start>
+   8:	00001517          	auipc	a0,0x1
+   c:	e5c50513          	addi	a0,a0,-420 # e64 <game>
+  10:	00001597          	auipc	a1,0x1
+  14:	19d58593          	addi	a1,a1,413 # 11ad <__bss_end>
+
+00000018 <clear_bss>:
+  18:	00b50863          	beq	a0,a1,28 <done_bss>
+  1c:	00052023          	sw	zero,0(a0)
+  20:	00450513          	addi	a0,a0,4
+  24:	ff5ff06f          	j	18 <clear_bss>
+
+00000028 <done_bss>:
+  28:	5b1000ef          	jal	dd8 <main>
+  2c:	0000006f          	j	2c <done_bss+0x4>
+
+00000030 <memory_barrier>:
+  30:	ff010113          	addi	sp,sp,-16
+  34:	00812623          	sw	s0,12(sp)
+  38:	01010413          	addi	s0,sp,16
+  3c:	00000013          	nop
+  40:	00000013          	nop
+  44:	00c12403          	lw	s0,12(sp)
+  48:	01010113          	addi	sp,sp,16
+  4c:	00008067          	ret
+
+00000050 <vga_clear_screen>:
+  50:	fd010113          	addi	sp,sp,-48
+  54:	02112623          	sw	ra,44(sp)
+  58:	02812423          	sw	s0,40(sp)
+  5c:	03010413          	addi	s0,sp,48
+  60:	00050793          	mv	a5,a0
+  64:	fcf40fa3          	sb	a5,-33(s0)
+  68:	fe042623          	sw	zero,-20(s0)
+  6c:	02c0006f          	j	98 <vga_clear_screen+0x48>
+  70:	000017b7          	lui	a5,0x1
+  74:	e587a703          	lw	a4,-424(a5) # e58 <vga_framebuffer>
+  78:	fec42783          	lw	a5,-20(s0)
+  7c:	00f707b3          	add	a5,a4,a5
+  80:	fdf44703          	lbu	a4,-33(s0)
+  84:	00e78023          	sb	a4,0(a5)
+  88:	fa9ff0ef          	jal	30 <memory_barrier>
+  8c:	fec42783          	lw	a5,-20(s0)
+  90:	00178793          	addi	a5,a5,1
+  94:	fef42623          	sw	a5,-20(s0)
+  98:	fec42703          	lw	a4,-20(s0)
+  9c:	000137b7          	lui	a5,0x13
+  a0:	bff78793          	addi	a5,a5,-1025 # 12bff <_stack_end+0xfa4f>
+  a4:	fce7d6e3          	bge	a5,a4,70 <vga_clear_screen+0x20>
+  a8:	00000013          	nop
+  ac:	00000013          	nop
+  b0:	02c12083          	lw	ra,44(sp)
+  b4:	02812403          	lw	s0,40(sp)
+  b8:	03010113          	addi	sp,sp,48
+  bc:	00008067          	ret
+
+000000c0 <vga_draw_pixel>:
+  c0:	fe010113          	addi	sp,sp,-32
+  c4:	00112e23          	sw	ra,28(sp)
+  c8:	00812c23          	sw	s0,24(sp)
+  cc:	02010413          	addi	s0,sp,32
+  d0:	fea42623          	sw	a0,-20(s0)
+  d4:	feb42423          	sw	a1,-24(s0)
+  d8:	00060793          	mv	a5,a2
+  dc:	fef403a3          	sb	a5,-25(s0)
+  e0:	fec42783          	lw	a5,-20(s0)
+  e4:	0407ce63          	bltz	a5,140 <vga_draw_pixel+0x80>
+  e8:	fec42703          	lw	a4,-20(s0)
+  ec:	13f00793          	li	a5,319
+  f0:	04e7c863          	blt	a5,a4,140 <vga_draw_pixel+0x80>
+  f4:	fe842783          	lw	a5,-24(s0)
+  f8:	0407c463          	bltz	a5,140 <vga_draw_pixel+0x80>
+  fc:	fe842703          	lw	a4,-24(s0)
+ 100:	0ef00793          	li	a5,239
+ 104:	02e7ce63          	blt	a5,a4,140 <vga_draw_pixel+0x80>
+ 108:	000017b7          	lui	a5,0x1
+ 10c:	e587a683          	lw	a3,-424(a5) # e58 <vga_framebuffer>
+ 110:	fe842703          	lw	a4,-24(s0)
+ 114:	00070793          	mv	a5,a4
+ 118:	00279793          	slli	a5,a5,0x2
+ 11c:	00e787b3          	add	a5,a5,a4
+ 120:	00679793          	slli	a5,a5,0x6
+ 124:	00078713          	mv	a4,a5
+ 128:	fec42783          	lw	a5,-20(s0)
+ 12c:	00f707b3          	add	a5,a4,a5
+ 130:	00f687b3          	add	a5,a3,a5
+ 134:	fe744703          	lbu	a4,-25(s0)
+ 138:	00e78023          	sb	a4,0(a5)
+ 13c:	ef5ff0ef          	jal	30 <memory_barrier>
+ 140:	00000013          	nop
+ 144:	01c12083          	lw	ra,28(sp)
+ 148:	01812403          	lw	s0,24(sp)
+ 14c:	02010113          	addi	sp,sp,32
+ 150:	00008067          	ret
+
+00000154 <vga_draw_rect>:
+ 154:	fc010113          	addi	sp,sp,-64
+ 158:	02112e23          	sw	ra,60(sp)
+ 15c:	02812c23          	sw	s0,56(sp)
+ 160:	04010413          	addi	s0,sp,64
+ 164:	fca42e23          	sw	a0,-36(s0)
+ 168:	fcb42c23          	sw	a1,-40(s0)
+ 16c:	fcc42a23          	sw	a2,-44(s0)
+ 170:	fcd42823          	sw	a3,-48(s0)
+ 174:	00070793          	mv	a5,a4
+ 178:	fcf407a3          	sb	a5,-49(s0)
+ 17c:	fe042623          	sw	zero,-20(s0)
+ 180:	05c0006f          	j	1dc <vga_draw_rect+0x88>
+ 184:	fe042423          	sw	zero,-24(s0)
+ 188:	03c0006f          	j	1c4 <vga_draw_rect+0x70>
+ 18c:	fdc42703          	lw	a4,-36(s0)
+ 190:	fe842783          	lw	a5,-24(s0)
+ 194:	00f706b3          	add	a3,a4,a5
+ 198:	fd842703          	lw	a4,-40(s0)
+ 19c:	fec42783          	lw	a5,-20(s0)
+ 1a0:	00f707b3          	add	a5,a4,a5
+ 1a4:	fcf44703          	lbu	a4,-49(s0)
+ 1a8:	00070613          	mv	a2,a4
+ 1ac:	00078593          	mv	a1,a5
+ 1b0:	00068513          	mv	a0,a3
+ 1b4:	f0dff0ef          	jal	c0 <vga_draw_pixel>
+ 1b8:	fe842783          	lw	a5,-24(s0)
+ 1bc:	00178793          	addi	a5,a5,1
+ 1c0:	fef42423          	sw	a5,-24(s0)
+ 1c4:	fe842703          	lw	a4,-24(s0)
+ 1c8:	fd442783          	lw	a5,-44(s0)
+ 1cc:	fcf740e3          	blt	a4,a5,18c <vga_draw_rect+0x38>
+ 1d0:	fec42783          	lw	a5,-20(s0)
+ 1d4:	00178793          	addi	a5,a5,1
+ 1d8:	fef42623          	sw	a5,-20(s0)
+ 1dc:	fec42703          	lw	a4,-20(s0)
+ 1e0:	fd042783          	lw	a5,-48(s0)
+ 1e4:	faf740e3          	blt	a4,a5,184 <vga_draw_rect+0x30>
+ 1e8:	00000013          	nop
+ 1ec:	00000013          	nop
+ 1f0:	03c12083          	lw	ra,60(sp)
+ 1f4:	03812403          	lw	s0,56(sp)
+ 1f8:	04010113          	addi	sp,sp,64
+ 1fc:	00008067          	ret
+
+00000200 <get_input>:
+ 200:	fe010113          	addi	sp,sp,-32
+ 204:	00812e23          	sw	s0,28(sp)
+ 208:	02010413          	addi	s0,sp,32
+ 20c:	000017b7          	lui	a5,0x1
+ 210:	e5c7a783          	lw	a5,-420(a5) # e5c <buttons>
+ 214:	0007a783          	lw	a5,0(a5)
+ 218:	fef42623          	sw	a5,-20(s0)
+ 21c:	fec42783          	lw	a5,-20(s0)
+ 220:	0017f793          	andi	a5,a5,1
+ 224:	00078663          	beqz	a5,230 <get_input+0x30>
+ 228:	00000793          	li	a5,0
+ 22c:	0440006f          	j	270 <get_input+0x70>
+ 230:	fec42783          	lw	a5,-20(s0)
+ 234:	0027f793          	andi	a5,a5,2
+ 238:	00078663          	beqz	a5,244 <get_input+0x44>
+ 23c:	00100793          	li	a5,1
+ 240:	0300006f          	j	270 <get_input+0x70>
+ 244:	fec42783          	lw	a5,-20(s0)
+ 248:	0047f793          	andi	a5,a5,4
+ 24c:	00078663          	beqz	a5,258 <get_input+0x58>
+ 250:	00200793          	li	a5,2
+ 254:	01c0006f          	j	270 <get_input+0x70>
+ 258:	fec42783          	lw	a5,-20(s0)
+ 25c:	0087f793          	andi	a5,a5,8
+ 260:	00078663          	beqz	a5,26c <get_input+0x6c>
+ 264:	00300793          	li	a5,3
+ 268:	0080006f          	j	270 <get_input+0x70>
+ 26c:	00400793          	li	a5,4
+ 270:	00078513          	mv	a0,a5
+ 274:	01c12403          	lw	s0,28(sp)
+ 278:	02010113          	addi	sp,sp,32
+ 27c:	00008067          	ret
+
+00000280 <fast_rand>:
+ 280:	ff010113          	addi	sp,sp,-16
+ 284:	00812623          	sw	s0,12(sp)
+ 288:	01010413          	addi	s0,sp,16
+ 28c:	000017b7          	lui	a5,0x1
+ 290:	e607a703          	lw	a4,-416(a5) # e60 <rng_state>
+ 294:	41c657b7          	lui	a5,0x41c65
+ 298:	e6d78793          	addi	a5,a5,-403 # 41c64e6d <_stack_end+0x41c61cbd>
+ 29c:	02f70733          	mul	a4,a4,a5
+ 2a0:	000037b7          	lui	a5,0x3
+ 2a4:	03978793          	addi	a5,a5,57 # 3039 <_stack_start+0x1e89>
+ 2a8:	00f70733          	add	a4,a4,a5
+ 2ac:	000017b7          	lui	a5,0x1
+ 2b0:	e6e7a023          	sw	a4,-416(a5) # e60 <rng_state>
+ 2b4:	000017b7          	lui	a5,0x1
+ 2b8:	e607a783          	lw	a5,-416(a5) # e60 <rng_state>
+ 2bc:	00078513          	mv	a0,a5
+ 2c0:	00c12403          	lw	s0,12(sp)
+ 2c4:	01010113          	addi	sp,sp,16
+ 2c8:	00008067          	ret
+
+000002cc <place_food>:
+ 2cc:	fe010113          	addi	sp,sp,-32
+ 2d0:	00112e23          	sw	ra,28(sp)
+ 2d4:	00812c23          	sw	s0,24(sp)
+ 2d8:	02010413          	addi	s0,sp,32
+ 2dc:	fe0407a3          	sb	zero,-17(s0)
+ 2e0:	fe040723          	sb	zero,-18(s0)
+ 2e4:	0d00006f          	j	3b4 <place_food+0xe8>
+ 2e8:	f99ff0ef          	jal	280 <fast_rand>
+ 2ec:	00050793          	mv	a5,a0
+ 2f0:	01f7f713          	andi	a4,a5,31
+ 2f4:	000017b7          	lui	a5,0x1
+ 2f8:	e6478793          	addi	a5,a5,-412 # e64 <game>
+ 2fc:	32e7a423          	sw	a4,808(a5)
+ 300:	f81ff0ef          	jal	280 <fast_rand>
+ 304:	00050713          	mv	a4,a0
+ 308:	01800793          	li	a5,24
+ 30c:	02f777b3          	remu	a5,a4,a5
+ 310:	00078713          	mv	a4,a5
+ 314:	000017b7          	lui	a5,0x1
+ 318:	e6478793          	addi	a5,a5,-412 # e64 <game>
+ 31c:	32e7a623          	sw	a4,812(a5)
+ 320:	00100793          	li	a5,1
+ 324:	fef40723          	sb	a5,-18(s0)
+ 328:	fe042423          	sw	zero,-24(s0)
+ 32c:	0680006f          	j	394 <place_food+0xc8>
+ 330:	000017b7          	lui	a5,0x1
+ 334:	e6478793          	addi	a5,a5,-412 # e64 <game>
+ 338:	3287a703          	lw	a4,808(a5)
+ 33c:	000017b7          	lui	a5,0x1
+ 340:	e6478693          	addi	a3,a5,-412 # e64 <game>
+ 344:	fe842783          	lw	a5,-24(s0)
+ 348:	00379793          	slli	a5,a5,0x3
+ 34c:	00f687b3          	add	a5,a3,a5
+ 350:	0007a783          	lw	a5,0(a5)
+ 354:	02f71a63          	bne	a4,a5,388 <place_food+0xbc>
+ 358:	000017b7          	lui	a5,0x1
+ 35c:	e6478793          	addi	a5,a5,-412 # e64 <game>
+ 360:	32c7a703          	lw	a4,812(a5)
+ 364:	000017b7          	lui	a5,0x1
+ 368:	e6478693          	addi	a3,a5,-412 # e64 <game>
+ 36c:	fe842783          	lw	a5,-24(s0)
+ 370:	00379793          	slli	a5,a5,0x3
+ 374:	00f687b3          	add	a5,a3,a5
+ 378:	0047a783          	lw	a5,4(a5)
+ 37c:	00f71663          	bne	a4,a5,388 <place_food+0xbc>
+ 380:	fe040723          	sb	zero,-18(s0)
+ 384:	0240006f          	j	3a8 <place_food+0xdc>
+ 388:	fe842783          	lw	a5,-24(s0)
+ 38c:	00178793          	addi	a5,a5,1
+ 390:	fef42423          	sw	a5,-24(s0)
+ 394:	000017b7          	lui	a5,0x1
+ 398:	e6478793          	addi	a5,a5,-412 # e64 <game>
+ 39c:	3207a783          	lw	a5,800(a5)
+ 3a0:	fe842703          	lw	a4,-24(s0)
+ 3a4:	f8f746e3          	blt	a4,a5,330 <place_food+0x64>
+ 3a8:	fef44783          	lbu	a5,-17(s0)
+ 3ac:	00178793          	addi	a5,a5,1
+ 3b0:	fef407a3          	sb	a5,-17(s0)
+ 3b4:	fee44783          	lbu	a5,-18(s0)
+ 3b8:	00079863          	bnez	a5,3c8 <place_food+0xfc>
+ 3bc:	fef44703          	lbu	a4,-17(s0)
+ 3c0:	03100793          	li	a5,49
+ 3c4:	f2e7f2e3          	bgeu	a5,a4,2e8 <place_food+0x1c>
+ 3c8:	fee44783          	lbu	a5,-18(s0)
+ 3cc:	04079463          	bnez	a5,414 <place_food+0x148>
+ 3d0:	eb1ff0ef          	jal	280 <fast_rand>
+ 3d4:	00050793          	mv	a5,a0
+ 3d8:	00f7f793          	andi	a5,a5,15
+ 3dc:	00878793          	addi	a5,a5,8
+ 3e0:	00078713          	mv	a4,a5
+ 3e4:	000017b7          	lui	a5,0x1
+ 3e8:	e6478793          	addi	a5,a5,-412 # e64 <game>
+ 3ec:	32e7a423          	sw	a4,808(a5)
+ 3f0:	e91ff0ef          	jal	280 <fast_rand>
+ 3f4:	00050713          	mv	a4,a0
+ 3f8:	00c00793          	li	a5,12
+ 3fc:	02f777b3          	remu	a5,a4,a5
+ 400:	00678793          	addi	a5,a5,6
+ 404:	00078713          	mv	a4,a5
+ 408:	000017b7          	lui	a5,0x1
+ 40c:	e6478793          	addi	a5,a5,-412 # e64 <game>
+ 410:	32e7a623          	sw	a4,812(a5)
+ 414:	00000013          	nop
+ 418:	01c12083          	lw	ra,28(sp)
+ 41c:	01812403          	lw	s0,24(sp)
+ 420:	02010113          	addi	sp,sp,32
+ 424:	00008067          	ret
+
+00000428 <init_game>:
+ 428:	fe010113          	addi	sp,sp,-32
+ 42c:	00112e23          	sw	ra,28(sp)
+ 430:	00812c23          	sw	s0,24(sp)
+ 434:	02010413          	addi	s0,sp,32
+ 438:	000017b7          	lui	a5,0x1
+ 43c:	e6478793          	addi	a5,a5,-412 # e64 <game>
+ 440:	00300713          	li	a4,3
+ 444:	32e7a023          	sw	a4,800(a5)
+ 448:	000017b7          	lui	a5,0x1
+ 44c:	e6478793          	addi	a5,a5,-412 # e64 <game>
+ 450:	00100713          	li	a4,1
+ 454:	32e7a223          	sw	a4,804(a5)
+ 458:	000017b7          	lui	a5,0x1
+ 45c:	e6478793          	addi	a5,a5,-412 # e64 <game>
+ 460:	3207a823          	sw	zero,816(a5)
+ 464:	000017b7          	lui	a5,0x1
+ 468:	e6478793          	addi	a5,a5,-412 # e64 <game>
+ 46c:	00049737          	lui	a4,0x49
+ 470:	3e070713          	addi	a4,a4,992 # 493e0 <_stack_end+0x46230>
+ 474:	32e7ac23          	sw	a4,824(a5)
+ 478:	000017b7          	lui	a5,0x1
+ 47c:	e6478793          	addi	a5,a5,-412 # e64 <game>
+ 480:	32078e23          	sb	zero,828(a5)
+ 484:	fe042623          	sw	zero,-20(s0)
+ 488:	0500006f          	j	4d8 <init_game+0xb0>
+ 48c:	01000713          	li	a4,16
+ 490:	fec42783          	lw	a5,-20(s0)
+ 494:	40f70733          	sub	a4,a4,a5
+ 498:	000017b7          	lui	a5,0x1
+ 49c:	e6478693          	addi	a3,a5,-412 # e64 <game>
+ 4a0:	fec42783          	lw	a5,-20(s0)
+ 4a4:	00379793          	slli	a5,a5,0x3
+ 4a8:	00f687b3          	add	a5,a3,a5
+ 4ac:	00e7a023          	sw	a4,0(a5)
+ 4b0:	000017b7          	lui	a5,0x1
+ 4b4:	e6478713          	addi	a4,a5,-412 # e64 <game>
+ 4b8:	fec42783          	lw	a5,-20(s0)
+ 4bc:	00379793          	slli	a5,a5,0x3
+ 4c0:	00f707b3          	add	a5,a4,a5
+ 4c4:	00c00713          	li	a4,12
+ 4c8:	00e7a223          	sw	a4,4(a5)
+ 4cc:	fec42783          	lw	a5,-20(s0)
+ 4d0:	00178793          	addi	a5,a5,1
+ 4d4:	fef42623          	sw	a5,-20(s0)
+ 4d8:	000017b7          	lui	a5,0x1
+ 4dc:	e6478793          	addi	a5,a5,-412 # e64 <game>
+ 4e0:	3207a783          	lw	a5,800(a5)
+ 4e4:	fec42703          	lw	a4,-20(s0)
+ 4e8:	faf742e3          	blt	a4,a5,48c <init_game+0x64>
+ 4ec:	de1ff0ef          	jal	2cc <place_food>
+ 4f0:	00000013          	nop
+ 4f4:	01c12083          	lw	ra,28(sp)
+ 4f8:	01812403          	lw	s0,24(sp)
+ 4fc:	02010113          	addi	sp,sp,32
+ 500:	00008067          	ret
+
+00000504 <reset_game>:
+ 504:	ff010113          	addi	sp,sp,-16
+ 508:	00112623          	sw	ra,12(sp)
+ 50c:	00812423          	sw	s0,8(sp)
+ 510:	01010413          	addi	s0,sp,16
+ 514:	000017b7          	lui	a5,0x1
+ 518:	e6478793          	addi	a5,a5,-412 # e64 <game>
+ 51c:	3307a703          	lw	a4,816(a5)
+ 520:	000017b7          	lui	a5,0x1
+ 524:	e6478793          	addi	a5,a5,-412 # e64 <game>
+ 528:	3347a783          	lw	a5,820(a5)
+ 52c:	00e7fe63          	bgeu	a5,a4,548 <reset_game+0x44>
+ 530:	000017b7          	lui	a5,0x1
+ 534:	e6478793          	addi	a5,a5,-412 # e64 <game>
+ 538:	3307a703          	lw	a4,816(a5)
+ 53c:	000017b7          	lui	a5,0x1
+ 540:	e6478793          	addi	a5,a5,-412 # e64 <game>
+ 544:	32e7aa23          	sw	a4,820(a5)
+ 548:	ee1ff0ef          	jal	428 <init_game>
+ 54c:	00000013          	nop
+ 550:	00c12083          	lw	ra,12(sp)
+ 554:	00812403          	lw	s0,8(sp)
+ 558:	01010113          	addi	sp,sp,16
+ 55c:	00008067          	ret
+
+00000560 <update_game>:
+ 560:	fe010113          	addi	sp,sp,-32
+ 564:	00112e23          	sw	ra,28(sp)
+ 568:	00812c23          	sw	s0,24(sp)
+ 56c:	02010413          	addi	s0,sp,32
+ 570:	000017b7          	lui	a5,0x1
+ 574:	e6478793          	addi	a5,a5,-412 # e64 <game>
+ 578:	33c7c703          	lbu	a4,828(a5)
+ 57c:	00100793          	li	a5,1
+ 580:	3ef70863          	beq	a4,a5,970 <update_game+0x410>
+ 584:	000017b7          	lui	a5,0x1
+ 588:	e6478793          	addi	a5,a5,-412 # e64 <game>
+ 58c:	33c7c703          	lbu	a4,828(a5)
+ 590:	00200793          	li	a5,2
+ 594:	3cf70e63          	beq	a4,a5,970 <update_game+0x410>
+ 598:	c69ff0ef          	jal	200 <get_input>
+ 59c:	fea42223          	sw	a0,-28(s0)
+ 5a0:	fe442703          	lw	a4,-28(s0)
+ 5a4:	00400793          	li	a5,4
+ 5a8:	08f70663          	beq	a4,a5,634 <update_game+0xd4>
+ 5ac:	000017b7          	lui	a5,0x1
+ 5b0:	e6478793          	addi	a5,a5,-412 # e64 <game>
+ 5b4:	3247a783          	lw	a5,804(a5)
+ 5b8:	00079863          	bnez	a5,5c8 <update_game+0x68>
+ 5bc:	fe442703          	lw	a4,-28(s0)
+ 5c0:	00200793          	li	a5,2
+ 5c4:	06f71063          	bne	a4,a5,624 <update_game+0xc4>
+ 5c8:	000017b7          	lui	a5,0x1
+ 5cc:	e6478793          	addi	a5,a5,-412 # e64 <game>
+ 5d0:	3247a703          	lw	a4,804(a5)
+ 5d4:	00200793          	li	a5,2
+ 5d8:	00f71663          	bne	a4,a5,5e4 <update_game+0x84>
+ 5dc:	fe442783          	lw	a5,-28(s0)
+ 5e0:	04079263          	bnez	a5,624 <update_game+0xc4>
+ 5e4:	000017b7          	lui	a5,0x1
+ 5e8:	e6478793          	addi	a5,a5,-412 # e64 <game>
+ 5ec:	3247a703          	lw	a4,804(a5)
+ 5f0:	00300793          	li	a5,3
+ 5f4:	00f71863          	bne	a4,a5,604 <update_game+0xa4>
+ 5f8:	fe442703          	lw	a4,-28(s0)
+ 5fc:	00100793          	li	a5,1
+ 600:	02f71263          	bne	a4,a5,624 <update_game+0xc4>
+ 604:	000017b7          	lui	a5,0x1
+ 608:	e6478793          	addi	a5,a5,-412 # e64 <game>
+ 60c:	3247a703          	lw	a4,804(a5)
+ 610:	00100793          	li	a5,1
+ 614:	02f71063          	bne	a4,a5,634 <update_game+0xd4>
+ 618:	fe442703          	lw	a4,-28(s0)
+ 61c:	00300793          	li	a5,3
+ 620:	00f70a63          	beq	a4,a5,634 <update_game+0xd4>
+ 624:	000017b7          	lui	a5,0x1
+ 628:	e6478793          	addi	a5,a5,-412 # e64 <game>
+ 62c:	fe442703          	lw	a4,-28(s0)
+ 630:	32e7a223          	sw	a4,804(a5)
+ 634:	000017b7          	lui	a5,0x1
+ 638:	e6478793          	addi	a5,a5,-412 # e64 <game>
+ 63c:	3207a783          	lw	a5,800(a5)
+ 640:	fff78793          	addi	a5,a5,-1
+ 644:	fef42623          	sw	a5,-20(s0)
+ 648:	04c0006f          	j	694 <update_game+0x134>
+ 64c:	fec42783          	lw	a5,-20(s0)
+ 650:	fff78713          	addi	a4,a5,-1
+ 654:	000017b7          	lui	a5,0x1
+ 658:	e6478693          	addi	a3,a5,-412 # e64 <game>
+ 65c:	fec42783          	lw	a5,-20(s0)
+ 660:	00379793          	slli	a5,a5,0x3
+ 664:	00f687b3          	add	a5,a3,a5
+ 668:	000016b7          	lui	a3,0x1
+ 66c:	e6468693          	addi	a3,a3,-412 # e64 <game>
+ 670:	00371713          	slli	a4,a4,0x3
+ 674:	00e68733          	add	a4,a3,a4
+ 678:	00072683          	lw	a3,0(a4)
+ 67c:	00d7a023          	sw	a3,0(a5)
+ 680:	00472703          	lw	a4,4(a4)
+ 684:	00e7a223          	sw	a4,4(a5)
+ 688:	fec42783          	lw	a5,-20(s0)
+ 68c:	fff78793          	addi	a5,a5,-1
+ 690:	fef42623          	sw	a5,-20(s0)
+ 694:	fec42783          	lw	a5,-20(s0)
+ 698:	faf04ae3          	bgtz	a5,64c <update_game+0xec>
+ 69c:	000017b7          	lui	a5,0x1
+ 6a0:	e6478793          	addi	a5,a5,-412 # e64 <game>
+ 6a4:	3247a783          	lw	a5,804(a5)
+ 6a8:	00300713          	li	a4,3
+ 6ac:	06e78663          	beq	a5,a4,718 <update_game+0x1b8>
+ 6b0:	00300713          	li	a4,3
+ 6b4:	0af76263          	bltu	a4,a5,758 <update_game+0x1f8>
+ 6b8:	00200713          	li	a4,2
+ 6bc:	02e78e63          	beq	a5,a4,6f8 <update_game+0x198>
+ 6c0:	00200713          	li	a4,2
+ 6c4:	08f76a63          	bltu	a4,a5,758 <update_game+0x1f8>
+ 6c8:	00078863          	beqz	a5,6d8 <update_game+0x178>
+ 6cc:	00100713          	li	a4,1
+ 6d0:	06e78463          	beq	a5,a4,738 <update_game+0x1d8>
+ 6d4:	0840006f          	j	758 <update_game+0x1f8>
+ 6d8:	000017b7          	lui	a5,0x1
+ 6dc:	e6478793          	addi	a5,a5,-412 # e64 <game>
+ 6e0:	0047a783          	lw	a5,4(a5)
+ 6e4:	fff78713          	addi	a4,a5,-1
+ 6e8:	000017b7          	lui	a5,0x1
+ 6ec:	e6478793          	addi	a5,a5,-412 # e64 <game>
+ 6f0:	00e7a223          	sw	a4,4(a5)
+ 6f4:	0680006f          	j	75c <update_game+0x1fc>
+ 6f8:	000017b7          	lui	a5,0x1
+ 6fc:	e6478793          	addi	a5,a5,-412 # e64 <game>
+ 700:	0047a783          	lw	a5,4(a5)
+ 704:	00178713          	addi	a4,a5,1
+ 708:	000017b7          	lui	a5,0x1
+ 70c:	e6478793          	addi	a5,a5,-412 # e64 <game>
+ 710:	00e7a223          	sw	a4,4(a5)
+ 714:	0480006f          	j	75c <update_game+0x1fc>
+ 718:	000017b7          	lui	a5,0x1
+ 71c:	e6478793          	addi	a5,a5,-412 # e64 <game>
+ 720:	0007a783          	lw	a5,0(a5)
+ 724:	fff78713          	addi	a4,a5,-1
+ 728:	000017b7          	lui	a5,0x1
+ 72c:	e6478793          	addi	a5,a5,-412 # e64 <game>
+ 730:	00e7a023          	sw	a4,0(a5)
+ 734:	0280006f          	j	75c <update_game+0x1fc>
+ 738:	000017b7          	lui	a5,0x1
+ 73c:	e6478793          	addi	a5,a5,-412 # e64 <game>
+ 740:	0007a783          	lw	a5,0(a5)
+ 744:	00178713          	addi	a4,a5,1
+ 748:	000017b7          	lui	a5,0x1
+ 74c:	e6478793          	addi	a5,a5,-412 # e64 <game>
+ 750:	00e7a023          	sw	a4,0(a5)
+ 754:	0080006f          	j	75c <update_game+0x1fc>
+ 758:	00000013          	nop
+ 75c:	000017b7          	lui	a5,0x1
+ 760:	e6478793          	addi	a5,a5,-412 # e64 <game>
+ 764:	0007a783          	lw	a5,0(a5)
+ 768:	0207ce63          	bltz	a5,7a4 <update_game+0x244>
+ 76c:	000017b7          	lui	a5,0x1
+ 770:	e6478793          	addi	a5,a5,-412 # e64 <game>
+ 774:	0007a703          	lw	a4,0(a5)
+ 778:	01f00793          	li	a5,31
+ 77c:	02e7c463          	blt	a5,a4,7a4 <update_game+0x244>
+ 780:	000017b7          	lui	a5,0x1
+ 784:	e6478793          	addi	a5,a5,-412 # e64 <game>
+ 788:	0047a783          	lw	a5,4(a5)
+ 78c:	0007cc63          	bltz	a5,7a4 <update_game+0x244>
+ 790:	000017b7          	lui	a5,0x1
+ 794:	e6478793          	addi	a5,a5,-412 # e64 <game>
+ 798:	0047a703          	lw	a4,4(a5)
+ 79c:	01700793          	li	a5,23
+ 7a0:	00e7dc63          	bge	a5,a4,7b8 <update_game+0x258>
+ 7a4:	000017b7          	lui	a5,0x1
+ 7a8:	e6478793          	addi	a5,a5,-412 # e64 <game>
+ 7ac:	00100713          	li	a4,1
+ 7b0:	32e78e23          	sb	a4,828(a5)
+ 7b4:	1c00006f          	j	974 <update_game+0x414>
+ 7b8:	000017b7          	lui	a5,0x1
+ 7bc:	e6478793          	addi	a5,a5,-412 # e64 <game>
+ 7c0:	3207a703          	lw	a4,800(a5)
+ 7c4:	00400793          	li	a5,4
+ 7c8:	08e7da63          	bge	a5,a4,85c <update_game+0x2fc>
+ 7cc:	00400793          	li	a5,4
+ 7d0:	fef42423          	sw	a5,-24(s0)
+ 7d4:	0740006f          	j	848 <update_game+0x2e8>
+ 7d8:	000017b7          	lui	a5,0x1
+ 7dc:	e6478793          	addi	a5,a5,-412 # e64 <game>
+ 7e0:	0007a703          	lw	a4,0(a5)
+ 7e4:	000017b7          	lui	a5,0x1
+ 7e8:	e6478693          	addi	a3,a5,-412 # e64 <game>
+ 7ec:	fe842783          	lw	a5,-24(s0)
+ 7f0:	00379793          	slli	a5,a5,0x3
+ 7f4:	00f687b3          	add	a5,a3,a5
+ 7f8:	0007a783          	lw	a5,0(a5)
+ 7fc:	04f71063          	bne	a4,a5,83c <update_game+0x2dc>
+ 800:	000017b7          	lui	a5,0x1
+ 804:	e6478793          	addi	a5,a5,-412 # e64 <game>
+ 808:	0047a703          	lw	a4,4(a5)
+ 80c:	000017b7          	lui	a5,0x1
+ 810:	e6478693          	addi	a3,a5,-412 # e64 <game>
+ 814:	fe842783          	lw	a5,-24(s0)
+ 818:	00379793          	slli	a5,a5,0x3
+ 81c:	00f687b3          	add	a5,a3,a5
+ 820:	0047a783          	lw	a5,4(a5)
+ 824:	00f71c63          	bne	a4,a5,83c <update_game+0x2dc>
+ 828:	000017b7          	lui	a5,0x1
+ 82c:	e6478793          	addi	a5,a5,-412 # e64 <game>
+ 830:	00100713          	li	a4,1
+ 834:	32e78e23          	sb	a4,828(a5)
+ 838:	13c0006f          	j	974 <update_game+0x414>
+ 83c:	fe842783          	lw	a5,-24(s0)
+ 840:	00178793          	addi	a5,a5,1
+ 844:	fef42423          	sw	a5,-24(s0)
+ 848:	000017b7          	lui	a5,0x1
+ 84c:	e6478793          	addi	a5,a5,-412 # e64 <game>
+ 850:	3207a783          	lw	a5,800(a5)
+ 854:	fe842703          	lw	a4,-24(s0)
+ 858:	f8f740e3          	blt	a4,a5,7d8 <update_game+0x278>
+ 85c:	000017b7          	lui	a5,0x1
+ 860:	e6478793          	addi	a5,a5,-412 # e64 <game>
+ 864:	0007a703          	lw	a4,0(a5)
+ 868:	000017b7          	lui	a5,0x1
+ 86c:	e6478793          	addi	a5,a5,-412 # e64 <game>
+ 870:	3287a783          	lw	a5,808(a5)
+ 874:	10f71063          	bne	a4,a5,974 <update_game+0x414>
+ 878:	000017b7          	lui	a5,0x1
+ 87c:	e6478793          	addi	a5,a5,-412 # e64 <game>
+ 880:	0047a703          	lw	a4,4(a5)
+ 884:	000017b7          	lui	a5,0x1
+ 888:	e6478793          	addi	a5,a5,-412 # e64 <game>
+ 88c:	32c7a783          	lw	a5,812(a5)
+ 890:	0ef71263          	bne	a4,a5,974 <update_game+0x414>
+ 894:	000017b7          	lui	a5,0x1
+ 898:	e6478793          	addi	a5,a5,-412 # e64 <game>
+ 89c:	3207a703          	lw	a4,800(a5)
+ 8a0:	06300793          	li	a5,99
+ 8a4:	0ce7c263          	blt	a5,a4,968 <update_game+0x408>
+ 8a8:	000017b7          	lui	a5,0x1
+ 8ac:	e6478793          	addi	a5,a5,-412 # e64 <game>
+ 8b0:	3207a783          	lw	a5,800(a5)
+ 8b4:	fff78713          	addi	a4,a5,-1
+ 8b8:	000017b7          	lui	a5,0x1
+ 8bc:	e6478793          	addi	a5,a5,-412 # e64 <game>
+ 8c0:	3207a783          	lw	a5,800(a5)
+ 8c4:	000016b7          	lui	a3,0x1
+ 8c8:	e6468693          	addi	a3,a3,-412 # e64 <game>
+ 8cc:	00379793          	slli	a5,a5,0x3
+ 8d0:	00f687b3          	add	a5,a3,a5
+ 8d4:	000016b7          	lui	a3,0x1
+ 8d8:	e6468693          	addi	a3,a3,-412 # e64 <game>
+ 8dc:	00371713          	slli	a4,a4,0x3
+ 8e0:	00e68733          	add	a4,a3,a4
+ 8e4:	00072683          	lw	a3,0(a4)
+ 8e8:	00d7a023          	sw	a3,0(a5)
+ 8ec:	00472703          	lw	a4,4(a4)
+ 8f0:	00e7a223          	sw	a4,4(a5)
+ 8f4:	000017b7          	lui	a5,0x1
+ 8f8:	e6478793          	addi	a5,a5,-412 # e64 <game>
+ 8fc:	3207a783          	lw	a5,800(a5)
+ 900:	00178713          	addi	a4,a5,1
+ 904:	000017b7          	lui	a5,0x1
+ 908:	e6478793          	addi	a5,a5,-412 # e64 <game>
+ 90c:	32e7a023          	sw	a4,800(a5)
+ 910:	000017b7          	lui	a5,0x1
+ 914:	e6478793          	addi	a5,a5,-412 # e64 <game>
+ 918:	3307a783          	lw	a5,816(a5)
+ 91c:	00a78713          	addi	a4,a5,10
+ 920:	000017b7          	lui	a5,0x1
+ 924:	e6478793          	addi	a5,a5,-412 # e64 <game>
+ 928:	32e7a823          	sw	a4,816(a5)
+ 92c:	000017b7          	lui	a5,0x1
+ 930:	e6478793          	addi	a5,a5,-412 # e64 <game>
+ 934:	3387a703          	lw	a4,824(a5)
+ 938:	0000c7b7          	lui	a5,0xc
+ 93c:	35078793          	addi	a5,a5,848 # c350 <_stack_end+0x91a0>
+ 940:	02e7f463          	bgeu	a5,a4,968 <update_game+0x408>
+ 944:	000017b7          	lui	a5,0x1
+ 948:	e6478793          	addi	a5,a5,-412 # e64 <game>
+ 94c:	3387a703          	lw	a4,824(a5)
+ 950:	fffff7b7          	lui	a5,0xfffff
+ 954:	c7878793          	addi	a5,a5,-904 # ffffec78 <_stack_end+0xffffbac8>
+ 958:	00f70733          	add	a4,a4,a5
+ 95c:	000017b7          	lui	a5,0x1
+ 960:	e6478793          	addi	a5,a5,-412 # e64 <game>
+ 964:	32e7ac23          	sw	a4,824(a5)
+ 968:	965ff0ef          	jal	2cc <place_food>
+ 96c:	0080006f          	j	974 <update_game+0x414>
+ 970:	00000013          	nop
+ 974:	01c12083          	lw	ra,28(sp)
+ 978:	01812403          	lw	s0,24(sp)
+ 97c:	02010113          	addi	sp,sp,32
+ 980:	00008067          	ret
+
+00000984 <draw_border>:
+ 984:	ff010113          	addi	sp,sp,-16
+ 988:	00112623          	sw	ra,12(sp)
+ 98c:	00812423          	sw	s0,8(sp)
+ 990:	01010413          	addi	s0,sp,16
+ 994:	03800713          	li	a4,56
+ 998:	00100693          	li	a3,1
+ 99c:	14000613          	li	a2,320
+ 9a0:	00000593          	li	a1,0
+ 9a4:	00000513          	li	a0,0
+ 9a8:	facff0ef          	jal	154 <vga_draw_rect>
+ 9ac:	03800713          	li	a4,56
+ 9b0:	00100693          	li	a3,1
+ 9b4:	14000613          	li	a2,320
+ 9b8:	0ef00593          	li	a1,239
+ 9bc:	00000513          	li	a0,0
+ 9c0:	f94ff0ef          	jal	154 <vga_draw_rect>
+ 9c4:	03800713          	li	a4,56
+ 9c8:	0f000693          	li	a3,240
+ 9cc:	00100613          	li	a2,1
+ 9d0:	00000593          	li	a1,0
+ 9d4:	00000513          	li	a0,0
+ 9d8:	f7cff0ef          	jal	154 <vga_draw_rect>
+ 9dc:	03800713          	li	a4,56
+ 9e0:	0f000693          	li	a3,240
+ 9e4:	00100613          	li	a2,1
+ 9e8:	00000593          	li	a1,0
+ 9ec:	13f00513          	li	a0,319
+ 9f0:	f64ff0ef          	jal	154 <vga_draw_rect>
+ 9f4:	00000013          	nop
+ 9f8:	00c12083          	lw	ra,12(sp)
+ 9fc:	00812403          	lw	s0,8(sp)
+ a00:	01010113          	addi	sp,sp,16
+ a04:	00008067          	ret
+
+00000a08 <draw_score>:
+ a08:	fe010113          	addi	sp,sp,-32
+ a0c:	00112e23          	sw	ra,28(sp)
+ a10:	00812c23          	sw	s0,24(sp)
+ a14:	02010413          	addi	s0,sp,32
+ a18:	fe042623          	sw	zero,-20(s0)
+ a1c:	0340006f          	j	a50 <draw_score+0x48>
+ a20:	fec42783          	lw	a5,-20(s0)
+ a24:	09678793          	addi	a5,a5,150
+ a28:	00179793          	slli	a5,a5,0x1
+ a2c:	01c00713          	li	a4,28
+ a30:	00200693          	li	a3,2
+ a34:	00200613          	li	a2,2
+ a38:	00500593          	li	a1,5
+ a3c:	00078513          	mv	a0,a5
+ a40:	f14ff0ef          	jal	154 <vga_draw_rect>
+ a44:	fec42783          	lw	a5,-20(s0)
+ a48:	00178793          	addi	a5,a5,1
+ a4c:	fef42623          	sw	a5,-20(s0)
+ a50:	000017b7          	lui	a5,0x1
+ a54:	e6478793          	addi	a5,a5,-412 # e64 <game>
+ a58:	3307a703          	lw	a4,816(a5)
+ a5c:	00a00793          	li	a5,10
+ a60:	02f75733          	divu	a4,a4,a5
+ a64:	00a00793          	li	a5,10
+ a68:	02f77733          	remu	a4,a4,a5
+ a6c:	fec42783          	lw	a5,-20(s0)
+ a70:	fae7e8e3          	bltu	a5,a4,a20 <draw_score+0x18>
+ a74:	00000013          	nop
+ a78:	00000013          	nop
+ a7c:	01c12083          	lw	ra,28(sp)
+ a80:	01812403          	lw	s0,24(sp)
+ a84:	02010113          	addi	sp,sp,32
+ a88:	00008067          	ret
+
+00000a8c <draw_game>:
+ a8c:	fd010113          	addi	sp,sp,-48
+ a90:	02112623          	sw	ra,44(sp)
+ a94:	02812423          	sw	s0,40(sp)
+ a98:	03010413          	addi	s0,sp,48
+ a9c:	00300513          	li	a0,3
+ aa0:	db0ff0ef          	jal	50 <vga_clear_screen>
+ aa4:	00100713          	li	a4,1
+ aa8:	0ee00693          	li	a3,238
+ aac:	13e00613          	li	a2,318
+ ab0:	00100593          	li	a1,1
+ ab4:	00100513          	li	a0,1
+ ab8:	e9cff0ef          	jal	154 <vga_draw_rect>
+ abc:	ec9ff0ef          	jal	984 <draw_border>
+ ac0:	000017b7          	lui	a5,0x1
+ ac4:	1a47c783          	lbu	a5,420(a5) # 11a4 <food_pulse.2>
+ ac8:	00178713          	addi	a4,a5,1
+ acc:	0ff77693          	zext.b	a3,a4
+ ad0:	00001737          	lui	a4,0x1
+ ad4:	1ad70223          	sb	a3,420(a4) # 11a4 <food_pulse.2>
+ ad8:	0047f793          	andi	a5,a5,4
+ adc:	00078663          	beqz	a5,ae8 <draw_game+0x5c>
+ ae0:	0e800793          	li	a5,232
+ ae4:	0080006f          	j	aec <draw_game+0x60>
+ ae8:	0e000793          	li	a5,224
+ aec:	fcf40fa3          	sb	a5,-33(s0)
+ af0:	000017b7          	lui	a5,0x1
+ af4:	e6478793          	addi	a5,a5,-412 # e64 <game>
+ af8:	3287a703          	lw	a4,808(a5)
+ afc:	00070793          	mv	a5,a4
+ b00:	00279793          	slli	a5,a5,0x2
+ b04:	00e787b3          	add	a5,a5,a4
+ b08:	00179793          	slli	a5,a5,0x1
+ b0c:	00078513          	mv	a0,a5
+ b10:	000017b7          	lui	a5,0x1
+ b14:	e6478793          	addi	a5,a5,-412 # e64 <game>
+ b18:	32c7a703          	lw	a4,812(a5)
+ b1c:	00070793          	mv	a5,a4
+ b20:	00279793          	slli	a5,a5,0x2
+ b24:	00e787b3          	add	a5,a5,a4
+ b28:	00179793          	slli	a5,a5,0x1
+ b2c:	00078593          	mv	a1,a5
+ b30:	fdf44783          	lbu	a5,-33(s0)
+ b34:	00078713          	mv	a4,a5
+ b38:	00a00693          	li	a3,10
+ b3c:	00a00613          	li	a2,10
+ b40:	e14ff0ef          	jal	154 <vga_draw_rect>
+ b44:	fe042623          	sw	zero,-20(s0)
+ b48:	1500006f          	j	c98 <draw_game+0x20c>
+ b4c:	fec42783          	lw	a5,-20(s0)
+ b50:	00479713          	slli	a4,a5,0x4
+ b54:	000017b7          	lui	a5,0x1
+ b58:	e6478793          	addi	a5,a5,-412 # e64 <game>
+ b5c:	3207a783          	lw	a5,800(a5)
+ b60:	02f747b3          	div	a5,a4,a5
+ b64:	0ff7f793          	zext.b	a5,a5
+ b68:	01f00713          	li	a4,31
+ b6c:	40f707b3          	sub	a5,a4,a5
+ b70:	fef405a3          	sb	a5,-21(s0)
+ b74:	feb44703          	lbu	a4,-21(s0)
+ b78:	00b00793          	li	a5,11
+ b7c:	00e7e663          	bltu	a5,a4,b88 <draw_game+0xfc>
+ b80:	00c00793          	li	a5,12
+ b84:	fef405a3          	sb	a5,-21(s0)
+ b88:	feb40783          	lb	a5,-21(s0)
+ b8c:	00279793          	slli	a5,a5,0x2
+ b90:	01879793          	slli	a5,a5,0x18
+ b94:	4187d793          	srai	a5,a5,0x18
+ b98:	0037e793          	ori	a5,a5,3
+ b9c:	01879793          	slli	a5,a5,0x18
+ ba0:	4187d793          	srai	a5,a5,0x18
+ ba4:	fcf40f23          	sb	a5,-34(s0)
+ ba8:	fec42783          	lw	a5,-20(s0)
+ bac:	06079a63          	bnez	a5,c20 <draw_game+0x194>
+ bb0:	000017b7          	lui	a5,0x1
+ bb4:	e6478713          	addi	a4,a5,-412 # e64 <game>
+ bb8:	fec42783          	lw	a5,-20(s0)
+ bbc:	00379793          	slli	a5,a5,0x3
+ bc0:	00f707b3          	add	a5,a4,a5
+ bc4:	0007a703          	lw	a4,0(a5)
+ bc8:	00070793          	mv	a5,a4
+ bcc:	00279793          	slli	a5,a5,0x2
+ bd0:	00e787b3          	add	a5,a5,a4
+ bd4:	00179793          	slli	a5,a5,0x1
+ bd8:	fff78513          	addi	a0,a5,-1
+ bdc:	000017b7          	lui	a5,0x1
+ be0:	e6478713          	addi	a4,a5,-412 # e64 <game>
+ be4:	fec42783          	lw	a5,-20(s0)
+ be8:	00379793          	slli	a5,a5,0x3
+ bec:	00f707b3          	add	a5,a4,a5
+ bf0:	0047a703          	lw	a4,4(a5)
+ bf4:	00070793          	mv	a5,a4
+ bf8:	00279793          	slli	a5,a5,0x2
+ bfc:	00e787b3          	add	a5,a5,a4
+ c00:	00179793          	slli	a5,a5,0x1
+ c04:	fff78793          	addi	a5,a5,-1
+ c08:	01f00713          	li	a4,31
+ c0c:	00c00693          	li	a3,12
+ c10:	00c00613          	li	a2,12
+ c14:	00078593          	mv	a1,a5
+ c18:	d3cff0ef          	jal	154 <vga_draw_rect>
+ c1c:	0700006f          	j	c8c <draw_game+0x200>
+ c20:	000017b7          	lui	a5,0x1
+ c24:	e6478713          	addi	a4,a5,-412 # e64 <game>
+ c28:	fec42783          	lw	a5,-20(s0)
+ c2c:	00379793          	slli	a5,a5,0x3
+ c30:	00f707b3          	add	a5,a4,a5
+ c34:	0007a703          	lw	a4,0(a5)
+ c38:	00070793          	mv	a5,a4
+ c3c:	00279793          	slli	a5,a5,0x2
+ c40:	00e787b3          	add	a5,a5,a4
+ c44:	00179793          	slli	a5,a5,0x1
+ c48:	00078513          	mv	a0,a5
+ c4c:	000017b7          	lui	a5,0x1
+ c50:	e6478713          	addi	a4,a5,-412 # e64 <game>
+ c54:	fec42783          	lw	a5,-20(s0)
+ c58:	00379793          	slli	a5,a5,0x3
+ c5c:	00f707b3          	add	a5,a4,a5
+ c60:	0047a703          	lw	a4,4(a5)
+ c64:	00070793          	mv	a5,a4
+ c68:	00279793          	slli	a5,a5,0x2
+ c6c:	00e787b3          	add	a5,a5,a4
+ c70:	00179793          	slli	a5,a5,0x1
+ c74:	00078593          	mv	a1,a5
+ c78:	fde44783          	lbu	a5,-34(s0)
+ c7c:	00078713          	mv	a4,a5
+ c80:	00a00693          	li	a3,10
+ c84:	00a00613          	li	a2,10
+ c88:	cccff0ef          	jal	154 <vga_draw_rect>
+ c8c:	fec42783          	lw	a5,-20(s0)
+ c90:	00178793          	addi	a5,a5,1
+ c94:	fef42623          	sw	a5,-20(s0)
+ c98:	000017b7          	lui	a5,0x1
+ c9c:	e6478793          	addi	a5,a5,-412 # e64 <game>
+ ca0:	3207a783          	lw	a5,800(a5)
+ ca4:	fec42703          	lw	a4,-20(s0)
+ ca8:	eaf742e3          	blt	a4,a5,b4c <draw_game+0xc0>
+ cac:	d5dff0ef          	jal	a08 <draw_score>
+ cb0:	000017b7          	lui	a5,0x1
+ cb4:	e6478793          	addi	a5,a5,-412 # e64 <game>
+ cb8:	33c7c703          	lbu	a4,828(a5)
+ cbc:	00100793          	li	a5,1
+ cc0:	06f71263          	bne	a4,a5,d24 <draw_game+0x298>
+ cc4:	04600793          	li	a5,70
+ cc8:	fef42223          	sw	a5,-28(s0)
+ ccc:	04c0006f          	j	d18 <draw_game+0x28c>
+ cd0:	05000793          	li	a5,80
+ cd4:	fef42023          	sw	a5,-32(s0)
+ cd8:	0280006f          	j	d00 <draw_game+0x274>
+ cdc:	0e300713          	li	a4,227
+ ce0:	00200693          	li	a3,2
+ ce4:	00200613          	li	a2,2
+ ce8:	fe442583          	lw	a1,-28(s0)
+ cec:	fe042503          	lw	a0,-32(s0)
+ cf0:	c64ff0ef          	jal	154 <vga_draw_rect>
+ cf4:	fe042783          	lw	a5,-32(s0)
+ cf8:	00278793          	addi	a5,a5,2
+ cfc:	fef42023          	sw	a5,-32(s0)
+ d00:	fe042703          	lw	a4,-32(s0)
+ d04:	0ef00793          	li	a5,239
+ d08:	fce7dae3          	bge	a5,a4,cdc <draw_game+0x250>
+ d0c:	fe442783          	lw	a5,-28(s0)
+ d10:	00278793          	addi	a5,a5,2
+ d14:	fef42223          	sw	a5,-28(s0)
+ d18:	fe442703          	lw	a4,-28(s0)
+ d1c:	0a900793          	li	a5,169
+ d20:	fae7d8e3          	bge	a5,a4,cd0 <draw_game+0x244>
+ d24:	00000013          	nop
+ d28:	02c12083          	lw	ra,44(sp)
+ d2c:	02812403          	lw	s0,40(sp)
+ d30:	03010113          	addi	sp,sp,48
+ d34:	00008067          	ret
+
+00000d38 <adaptive_delay>:
+ d38:	fd010113          	addi	sp,sp,-48
+ d3c:	02812623          	sw	s0,44(sp)
+ d40:	03010413          	addi	s0,sp,48
+ d44:	fca42e23          	sw	a0,-36(s0)
+ d48:	000017b7          	lui	a5,0x1
+ d4c:	1a87a783          	lw	a5,424(a5) # 11a8 <frame_count.1>
+ d50:	00178713          	addi	a4,a5,1
+ d54:	000017b7          	lui	a5,0x1
+ d58:	1ae7a423          	sw	a4,424(a5) # 11a8 <frame_count.1>
+ d5c:	000017b7          	lui	a5,0x1
+ d60:	1a87a703          	lw	a4,424(a5) # 11a8 <frame_count.1>
+ d64:	00300793          	li	a5,3
+ d68:	02f777b3          	remu	a5,a4,a5
+ d6c:	02079263          	bnez	a5,d90 <adaptive_delay+0x58>
+ d70:	000017b7          	lui	a5,0x1
+ d74:	e6478793          	addi	a5,a5,-412 # e64 <game>
+ d78:	3207a703          	lw	a4,800(a5)
+ d7c:	01400793          	li	a5,20
+ d80:	00e7d863          	bge	a5,a4,d90 <adaptive_delay+0x58>
+ d84:	000017b7          	lui	a5,0x1
+ d88:	00100713          	li	a4,1
+ d8c:	1ae78623          	sb	a4,428(a5) # 11ac <skip_frame.0>
+ d90:	000017b7          	lui	a5,0x1
+ d94:	1ac7c783          	lbu	a5,428(a5) # 11ac <skip_frame.0>
+ d98:	02079463          	bnez	a5,dc0 <adaptive_delay+0x88>
+ d9c:	fe042623          	sw	zero,-20(s0)
+ da0:	0140006f          	j	db4 <adaptive_delay+0x7c>
+ da4:	00000013          	nop
+ da8:	fec42783          	lw	a5,-20(s0)
+ dac:	00178793          	addi	a5,a5,1
+ db0:	fef42623          	sw	a5,-20(s0)
+ db4:	fec42783          	lw	a5,-20(s0)
+ db8:	fdc42703          	lw	a4,-36(s0)
+ dbc:	fee7e4e3          	bltu	a5,a4,da4 <adaptive_delay+0x6c>
+ dc0:	000017b7          	lui	a5,0x1
+ dc4:	1a078623          	sb	zero,428(a5) # 11ac <skip_frame.0>
+ dc8:	00000013          	nop
+ dcc:	02c12403          	lw	s0,44(sp)
+ dd0:	03010113          	addi	sp,sp,48
+ dd4:	00008067          	ret
+
+00000dd8 <main>:
+ dd8:	fe010113          	addi	sp,sp,-32
+ ddc:	00112e23          	sw	ra,28(sp)
+ de0:	00812c23          	sw	s0,24(sp)
+ de4:	02010413          	addi	s0,sp,32
+ de8:	e40ff0ef          	jal	428 <init_game>
+ dec:	000017b7          	lui	a5,0x1
+ df0:	e6478793          	addi	a5,a5,-412 # e64 <game>
+ df4:	3207aa23          	sw	zero,820(a5)
+ df8:	c08ff0ef          	jal	200 <get_input>
+ dfc:	fea42623          	sw	a0,-20(s0)
+ e00:	000017b7          	lui	a5,0x1
+ e04:	e6478793          	addi	a5,a5,-412 # e64 <game>
+ e08:	33c7c703          	lbu	a4,828(a5)
+ e0c:	00100793          	li	a5,1
+ e10:	00f71c63          	bne	a4,a5,e28 <main+0x50>
+ e14:	fec42703          	lw	a4,-20(s0)
+ e18:	00400793          	li	a5,4
+ e1c:	02f70063          	beq	a4,a5,e3c <main+0x64>
+ e20:	ee4ff0ef          	jal	504 <reset_game>
+ e24:	0180006f          	j	e3c <main+0x64>
+ e28:	000017b7          	lui	a5,0x1
+ e2c:	e6478793          	addi	a5,a5,-412 # e64 <game>
+ e30:	33c7c783          	lbu	a5,828(a5)
+ e34:	00079463          	bnez	a5,e3c <main+0x64>
+ e38:	f28ff0ef          	jal	560 <update_game>
+ e3c:	c51ff0ef          	jal	a8c <draw_game>
+ e40:	000017b7          	lui	a5,0x1
+ e44:	e6478793          	addi	a5,a5,-412 # e64 <game>
+ e48:	3387a783          	lw	a5,824(a5)
+ e4c:	00078513          	mv	a0,a5
+ e50:	ee9ff0ef          	jal	d38 <adaptive_delay>
+ e54:	fa5ff06f          	j	df8 <main+0x20>
